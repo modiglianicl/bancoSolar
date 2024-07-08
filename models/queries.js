@@ -120,10 +120,27 @@ let transferencia = async (monto,emisor,receptor) => {
             console.log(`Transferencia por ${monto} realizada. Emisor ${emisor} ; Receptor ${receptor}`)
             await pool.query('COMMIT')
             // Debemos obtener la id de cemisor y receptor....
+            // Obteniendo id del emisor
+            let sqlEmisor = {
+                text  : "SELECT id FROM usuarios WHERE nombre = $1",
+                values : [emisor]
+            }
+            let resEmisor = await pool.query(sqlEmisor);
+            let idEmisor = resEmisor.rows[0]['id'];
+            console.log(idEmisor);
+            // Obteniendo id receptor
+            let sqlReceptor = {
+                text  : "SELECT id FROM usuarios WHERE nombre = $1",
+                values : [receptor]
+            }
+            let resReceptor = await pool.query(sqlReceptor);
+            let idReceptor = resReceptor.rows[0]['id'];
+            console.log(idEmisor);
+            // Creando log transferencia
             let fecha_transfer = moment().format()
             let sql = {
                 text : "INSERT INTO transferencias (emisor,receptor,monto,fecha) VALUES($1,$2,$3,$4) RETURNING *",
-                values : [emisor,receptor,monto,fecha_transfer]
+                values : [idEmisor,idReceptor,monto,fecha_transfer]
             }
             let result = await pool.query(sql);
             if (result.rowCount >= 1)  {
