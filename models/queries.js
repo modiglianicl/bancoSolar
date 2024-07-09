@@ -164,7 +164,7 @@ let transferencia = async (monto,emisor,receptor) => {
 let obtenerTransferencias = async () => {
     try {
         let sql = {
-            text : "SELECT * FROM transferencias"
+            text : "select t.fecha, u.nombre as emisor, u2.nombre as receptor, t.monto from transferencias t join usuarios u on t.emisor = u.id join usuarios u2 on t.receptor = u2.id"
         }
         let result = await pool.query(sql);
         if (result.rowCount >= 1)  {
